@@ -1,1 +1,2 @@
 # SchoolYOU
+a cool website
