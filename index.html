@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mathematics Help</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      text-align: center;
+      background-color: #f0f0f0;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px;
+      width: 60%;
+    }
+    iframe {
+      margin-top: 20px;
+      width: 80%;
+      height: 400px;
+      border: none;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #results iframe {
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Mathematics Help</h1>
+  <p>Type a math topic and get YouTube videos (e.g. "algebra", "calculus") or other stuff :D uncle lemuel</p>
+
+  <input type="text" id="searchInput" placeholder="Enter a math topic...">
+  <br>
+  <button onclick="searchYouTube()">Search Videos</button>
+
+  <div id="results"></div>
+
+  <script>
+    const API_KEY = 'AIzaSyCkQrB7_32ju9eskkSeMYmFpW7PMJWfb-M';
+
+    async function searchYouTube() {
+      const query = document.getElementById('searchInput').value.trim();
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = "<p>Searching...</p>";
+
+      if (!query) {
+        resultsDiv.innerHTML = "<p>Please enter a topic.</p>";
+        return;
+      }
+
+      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${encodeURIComponent(query)}&key=${API_KEY}&maxResults=5`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        resultsDiv.innerHTML = "";
+
+        if (!data.items || data.items.length === 0) {
+          resultsDiv.innerHTML = "<p>No videos found.</p>";
+          return;
+        }
+
+        data.items.forEach(item => {
+          const videoId = item.id.videoId;
+          const iframe = document.createElement("iframe");
+          iframe.src = `https://www.youtube.com/embed/${videoId}`;
+          iframe.allowFullscreen = true;
+          resultsDiv.appendChild(iframe);
+        });
+      } catch (error) {
+        resultsDiv.innerHTML = "<p>Error loading videos. Check the console for more info.</p>";
+        console.error(error);
+      }
+    }
+  </script>
+
+</body>
+</html>
